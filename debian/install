@@ -1,3 +1,4 @@
 sidux-server-config	usr/sbin/
 usr/share/sidux-server-config/bin/main.sh			usr/share/sidux-server-config/bin/
-
+etc/sidux-server-config/main.conf				etc/sidux-server-config/
+usr/share/sidux-server-config/bin/mod_vsftpd			usr/share/sidux-server-config/bin/
