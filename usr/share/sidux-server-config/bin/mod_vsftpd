@@ -1,0 +1,24 @@
+#!/bin/sh
+# mod_vsftpd
+
+. $CONFIG
+
+# What we need here
+# - Check if installed
+# - Check if Port is free
+# - Check/Read Config
+# - Check Variables in main.conf
+# 
+#
+
+if [ -f /usr/sbin/vsftpd ]; then
+	SSC_VSFTPD_INSTALLED="TRUE"
+else
+	SSC_VSFTPD_INSTALLED="FALSE"
+fi
+
+SSC_VSFTPD_PORT_FREE="FALSE"
+netstat -ntlp | grep :21 > /dev/null || SSC_VSFTPD_PORT_FREE="TRUE"
+
+SSC_VSFTPD_PROCESS="FALSE"
+ps -ae | grep vsftpd && SSC_VSFTPD_PROCESS="TRUE"

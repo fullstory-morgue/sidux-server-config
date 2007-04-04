@@ -1,0 +1,11 @@
+Source: sidux-server-config
+Section: contrib/x11
+Priority: extra
+Maintainer: Andreas Weber <andreas@it-weber.com>
+Build-Depends: cdbs, debhelper (>= 5), dpatch
+Standards-Version: 3.7.2
+
+Package: sidux-binary-gfx
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: This Script is to configure Server deamons for sidux

@@ -1,0 +1,3 @@
+sidux-server-config	usr/sbin/
+usr/share/sidux-server-config/bin/main.sh			usr/share/sidux-server-config/bin/
+

@@ -1,0 +1,78 @@
+#!/bin/sh
+set -x
+# Variables
+DATE=$(date +%D\ %T)
+MEMFREE=$(grep MemFree /proc/meminfo | awk '{print $2}')
+DISKFILTER=$(df -k /usr/src | awk '{print $6}' | grep \/)
+DISKFREE=$(df -k /usr/src | grep $DISKFILTER | awk '{print $2}')
+
+# Allow lazy development and testing (Thx Kelmo)
+BASEDIR=$(dirname $0)
+if [[ ! -f  $BASEDIR/debian/changelog ]]; then
+	unset BASEDIR
+fi
+PROGRAMDIR=$BASEDIR/usr/share/sidux-server-config
+CONFIG=$BASEDIR/etc/sidux-server-config/main.conf
+MAINSCRIPT=$PROGRAMDIR/bin/main.sh
+
+
+#Colors
+# Reset fb color mode
+RESET="]R"
+# ANSI COLORS
+# Erase to end of line
+CRE="
+[K"
+# Clear and reset Screen
+CLEAR="c"
+# Normal color
+NORMAL="[0;39m"
+# RED: Failure or error message
+RED="[1;31m"
+# GREEN: Success message
+GREEN="[1;32m"
+# YELLOW: Descriptions
+YELLOW="[1;33m"
+# BLUE: System mesages
+BLUE="[1;34m"
+# MAGENTA: Found devices or drivers
+MAGENTA="[1;35m"
+# CYAN: Questions
+CYAN="[1;36m"
+# BOLD WHITE: Hint
+WHITE="[1;37m"
+
+# We have to be root. Oherwise we exit with exitcode 1
+if [ "$(id -u)" -ne 0 ]; then
+	[ -x /usr/bin/su-me ] && DISPLAY="" exec su-me "$0" "$@"
+
+	echo "${RED}Error: You must be root to run this script!${NORMAL}"
+	exit 1
+fi
+
+# Check fo ssft and choose a frontend. This will be needed later.
+#if [ -r /usr/bin/ssft.sh ]; then
+#	. /usr/bin/ssft.sh
+#	ssft_choose_frontend > /dev/null
+#else
+#	echo "/usr/bin/ssft.sh not found. Not a big Problem yet."
+#	echo "Please make sure ssft and zenity are installed."
+#	exit 1
+#fi
+
+# Check if we are on a HD Install or livemode
+FLL_IMAGE_DIR="SIDUX"
+FLL_DISTRO_MODE="installed"
+[ -r /etc/default/distro ] && . /etc/default/distro
+
+if [ "$FLL_DISTRO_MODE" = "live" ]; then
+	if grep -q unionfs /proc/mounts; then
+		echo "${BLUE}Unionfs found${NORMAL}."
+	else
+		echo "${BLUE}Activating Unionfs now.${NORMAL}"
+		mkdir -p /tmp/union
+		mount -t unionfs -o dirs="/tmp/union/:/$FLL_IMAGE_DIR" /none "/$FLL_IMAGE_DIR/" 2>&1 >/dev/null
+	fi
+fi
+
+. $MAINSCRIPT
